@@ -65,6 +65,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Home Path
+    |--------------------------------------------------------------------------
+    |
+    | Here you may configure the path where users will get redirected during
+    | authentication or pass word reset when the operations are successful
+    | and the user is authenticated. You are free to change this value.
+    |
+    */
+
+    'admin' => RouteServiceProvider::ADMIN,
+
+    /*
+    |--------------------------------------------------------------------------
     | Fortify Routes Middleware
     |--------------------------------------------------------------------------
     |
@@ -105,12 +118,12 @@ return [
     'features' => [
         Features::registration(),
         Features::resetPasswords(),
-        // Features::emailVerification(),
+//        Features::emailVerification(),
         Features::updateProfileInformation(),
         Features::updatePasswords(),
-        Features::twoFactorAuthentication([
-            'confirmPassword' => true,
-        ]),
+//        Features::twoFactorAuthentication([
+//            'confirmPassword' => true,
+//        ]),
     ],
 
 ];
