@@ -23,10 +23,10 @@
                 <password-input v-model="form.password_confirmation" :error="form.error('repeat_password')" label="Confirm Password"/>
                 <div class="flex flex-wrap -mx-3 mb-6">
                     <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                        <file-input v-model="form.avatar" type="file" accept="image/*" label="Photo" />
+                        <file-input v-model="form.avatar" :error="form.error('avatar')" type="file" accept="image/*" label="Photo" />
                     </div>
                     <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                        <select-input v-model="form.role" :options="roles" label="Role"/>
+                        <select-input v-model="form.role" :options="roles" :error="form.error('role')" label="Role"/>
                     </div>
                 </div>
                 <div class="flex justify-end">
@@ -89,9 +89,10 @@
                 data.append('email', this.form.email)
                 data.append('password', this.form.password)
                 data.append('password_confirmation', this.form.password)
-                data.append('avatar', this.form.avatar)
-                data.append('avatar', this.form.avatar)
-                data.append('role', this.form.role.id)
+                if (this.form.avatar) {
+                    data.append('avatar', this.form.avatar)
+                }
+                data.append('role', this.form.role)
 
                 this.$inertia.post(this.route('users.store'), data);
             },

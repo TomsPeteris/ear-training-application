@@ -87,8 +87,8 @@
                     data.append('password', this.form.password)
                     data.append('password_confirmation', this.form.password)
                 }
-                if (this.form.role.id !== this.user.role.id) {
-                    data.append('role_id', this.form.role.id)
+                if (this.form.role !== this.user.role) {
+                    data.append('role', this.form.role)
                 }
                 if (this.form.avatar) {
                     data.append('avatar', this.form.avatar)

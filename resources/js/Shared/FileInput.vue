@@ -1,7 +1,7 @@
 <template>
     <div class="mb-2">
         <label v-if="label" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">{{ label }}</label>
-        <div class="block w-full text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input" :class="{ error: errors.length }">
+        <div class="block w-full text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input">
             <input ref="file" type="file" :accept="accept" class="hidden" @change="change">
             <div v-if="!value">
                 <button type="button" class="px-4 py-1 bg-purple-600 hover:bg-purple-700 rounded-md text-xs font-medium text-white" @click="browse">
@@ -15,7 +15,11 @@
                 </button>
             </div>
         </div>
-        <div v-if="errors.length" class="form-error">{{ errors[0] }}</div>
+        <div v-show="error" class="mt-2 mb-4">
+            <p class="text-sm text-red-600">
+                {{ error }}
+            </p>
+        </div>
     </div>
 </template>
 
@@ -26,10 +30,7 @@
             value: File,
             label: String,
             accept: String,
-            errors: {
-                type: Array,
-                default: () => [],
-            },
+            error: String,
         },
 
         watch: {
