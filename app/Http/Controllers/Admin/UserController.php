@@ -34,7 +34,7 @@ class UserController extends Controller
 
     public function create() {
         return Inertia::render('Admin/Users/Create', [
-            'roles' => User::ROLES,
+            'roles' => User::ASSIGNABLE_ROLES,
         ]);
     }
 
@@ -42,8 +42,8 @@ class UserController extends Controller
         $request->validate([
             'username' => ['required', 'max:255', 'unique:users', 'alpha_dash'],
             'full_name' => ['required', 'max:255'],
-            'email' => ['required', 'max:50', 'email', 'unique:users'],
-            'password' => ['required', 'max:50', 'min:8', 'confirmed'],
+            'email' => ['required', 'max:255', 'email', 'unique:users'],
+            'password' => ['required', 'max:255', 'min:8', 'confirmed'],
             'avatar' => ['sometimes', 'image'],
         ]);
 
@@ -66,7 +66,7 @@ class UserController extends Controller
     public function edit(User $user)
     {
         return Inertia::render('Admin/Users/Edit', [
-            'roles' => User::ROLES,
+            'roles' => User::ASSIGNABLE_ROLES,
             'user' => [
                 'id' => $user->id,
                 'username' => $user->username,

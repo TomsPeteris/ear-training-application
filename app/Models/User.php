@@ -13,7 +13,7 @@ class User extends Authenticatable
     const MEMBER_ROLE = 'Member';
     const ADMIN_ROLE = 'Admin';
     const SUPER_ADMIN_ROLE = 'Super Admin';
-    const ROLES = [self::MEMBER_ROLE, self::ADMIN_ROLE, self::SUPER_ADMIN_ROLE];
+    const ASSIGNABLE_ROLES = [self::MEMBER_ROLE, self::ADMIN_ROLE];
 
     /**
      * The attributes that are mass assignable.
