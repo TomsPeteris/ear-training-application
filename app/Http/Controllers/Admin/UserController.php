@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
-use App\Models\Role;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Carbon;
@@ -21,8 +20,8 @@ class UserController extends Controller
                 'username' => $user->username,
                 'full_name' => $user->full_name,
                 'email' => $user->email,
-                'role' => $user->role()->first()->role,
-                'avatar' => $user->getAvatar(),
+                'role' => $user->role,
+                'avatar' => $user->getAvatarPath(),
                 'created_at' => date('D m Y H:i', strtotime($user->created_at)),
             ];
         });
@@ -34,10 +33,8 @@ class UserController extends Controller
     }
 
     public function create() {
-        $roles = Role::all();
-
         return Inertia::render('Admin/Users/Create', [
-            'roles' => $roles,
+            'roles' => User::ROLES,
         ]);
     }
 
@@ -47,7 +44,7 @@ class UserController extends Controller
             'full_name' => ['required', 'max:255'],
             'email' => ['required', 'max:50', 'email', 'unique:users'],
             'password' => ['required', 'max:50', 'min:8', 'confirmed'],
-            'avatar' => ['nullable', 'file'],
+            'avatar' => ['sometimes', 'image'],
         ]);
 
         User::create([
@@ -55,8 +52,10 @@ class UserController extends Controller
             'full_name' => $request->input('full_name'),
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
-            'role_id' => $request->input('role'),
-            'avatar' => $request->file('avatar')->store('avatars'),
+            'role' => $request->input('role'),
+            'avatar' => $request->file('avatar')
+                ? $request->file('avatar')->store('avatars')
+                : null,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now()
         ]);
@@ -66,10 +65,8 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        $roles = Role::all();
-
         return Inertia::render('Admin/Users/Edit', [
-            'roles' => $roles,
+            'roles' => User::ROLES,
             'user' => [
                 'id' => $user->id,
                 'username' => $user->username,
@@ -88,8 +85,8 @@ class UserController extends Controller
             'full_name' => ['required', 'max:50'],
             'email' => ['required', 'max:50', 'email', Rule::unique('users')->ignore($user)],
             'password' => ['sometimes', 'required', 'min:8', 'max:50', 'confirmed'],
-            'avatar' => ['sometimes', 'file'],
-            'role_id' => ['sometimes', 'exists:roles,id'],
+            'avatar' => ['sometimes', 'image'],
+            'role' => ['sometimes'],
         ]);
 
         if ($request->input('password')) {
@@ -100,8 +97,8 @@ class UserController extends Controller
             $attributes['avatar'] = $request->file('avatar')->store('avatars');
         }
 
-        if ($request->input('role_id')) {
-            $attributes['role_id'] = $request->input('role_id');
+        if ($request->input('role')) {
+            $attributes['role'] = $request->input('role');
         }
 
         $user->update($attributes);

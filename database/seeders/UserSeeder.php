@@ -7,7 +7,6 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
-use App\Models\Role;
 
 class UserSeeder extends Seeder
 {
@@ -25,7 +24,7 @@ class UserSeeder extends Seeder
             'full_name' => 'Super Admin',
             'email' => 'suadmin@test.lv',
             'password' => Hash::make('password'),
-            'role_id' => Role::where('role', 'Super Admin')->first()->id,
+            'role' => User::SUPER_ADMIN_ROLE,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now()
         ]);

@@ -2,12 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens;
+    use HasApiTokens, hasFactory;
+
+    const MEMBER_ROLE = 'Member';
+    const ADMIN_ROLE = 'Admin';
+    const SUPER_ADMIN_ROLE = 'Super Admin';
+    const ROLES = [self::MEMBER_ROLE, self::ADMIN_ROLE, self::SUPER_ADMIN_ROLE];
 
     /**
      * The attributes that are mass assignable.
@@ -19,7 +25,7 @@ class User extends Authenticatable
         'full_name',
         'email',
         'password',
-        'role_id',
+        'role',
         'avatar',
     ];
 
@@ -42,19 +48,14 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function role()
-    {
-        return $this->belongsTo('App\Models\Role');
-    }
-
     public function isAdmin()
     {
-        return $this->role()->first()->role === 'Admin' ||
-            $this->role()->first()->role === 'Super Admin';
+        return $this->role === self::ADMIN_ROLE ||
+            $this->role === self::SUPER_ADMIN_ROLE;
     }
 
-    public function getAvatar()
+    public function getAvatarPath()
     {
-        return $this->avatar ? '/storage/'.$this->avatar : null;
+        return $this->avatar ? asset('storage/'.$this->avatar) : null;
     }
 }
