@@ -23,6 +23,15 @@
                         <span class="ml-4">Users</span>
                     </inertia-link>
                 </li>
+                <li class="relative px-6 py-3">
+                    <span :class="{ 'hidden' : !isRoute('notes') }" class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg" aria-hidden="true" />
+                    <inertia-link :class="isRoute('notes') ? 'text-gray-800  transform scale-110 translate-x-5' : 'transition duration-150 transform hover:scale-110 hover:text-gray-800 hover:translate-x-5'" class="inline-flex items-center w-full text-sm font-semibold" :href="route('notes')">
+                        <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                        </svg>
+                        <span class="ml-4">Notes</span>
+                    </inertia-link>
+                </li>
             </ul>
         </div>
     </aside>
