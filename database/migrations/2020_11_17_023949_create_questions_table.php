@@ -19,9 +19,6 @@ class CreateQuestionsTable extends Migration
             $table->boolean('answer');
             $table->string('direction');
             $table->string('type');
-            $table->foreignId('root')
-                ->constrained('notes')
-                ->onDelete('cascade');
             $table->foreignId('exercise_id')
                 ->constrained()
                 ->onDelete('cascade');

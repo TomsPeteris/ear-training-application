@@ -20,7 +20,6 @@ class Question extends Model
         'answer',
         'direction',
         'type',
-        'root',
         'exercise_id'
     ];
 

@@ -65,7 +65,6 @@ class ExerciseController extends Controller
                 'answer' => true,  //$question['answer'],
                 'direction' => $question['direction'],
                 'type' => $question['type'],
-                'root' => $question['root']['id'],
                 'exercise_id' => $exercise->id
             ]);
         }

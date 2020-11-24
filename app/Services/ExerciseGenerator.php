@@ -44,8 +44,6 @@ class ExerciseGenerator
         $question->put('sound', $this->getSoundFiles($interval['distance'], $question['direction']));
         $question->put('answers', $this->generateAnswers($interval->name));
 
-        dd($question);
-
         return $question;
     }
 
