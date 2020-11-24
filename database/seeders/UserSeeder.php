@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
     {
         DB::table('users')->delete();
 
-        User::create([
+        DB::table('users')->insert([
             'username' => 'super.admin',
             'full_name' => 'Super Admin',
             'email' => 'suadmin@test.lv',
