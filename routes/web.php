@@ -66,7 +66,7 @@ Route::get('/admin/users', [UserController::class, 'index'])
     ->name('users')
     ->middleware(['auth:sanctum', 'can:accessAdmin']);
 
-Route::post('/admin/users', [UserController::class, 'store'])
+Route::post('/admin/users/store', [UserController::class, 'store'])
     ->name('users.store')
     ->middleware(['auth:sanctum', 'can:accessAdmin']);
 
@@ -74,11 +74,15 @@ Route::get('/admin/users/create', [UserController::class, 'create'])
     ->name('users.create')
     ->middleware(['auth:sanctum', 'can:accessAdmin']);
 
-Route::put('/admin/users/{user}', [UserController::class, 'update'])
+Route::put('/admin/users/{user}/update', [UserController::class, 'update'])
     ->name('users.update')
     ->middleware(['auth:sanctum', 'can:accessAdmin']);
 
-Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])
+Route::put('/admin/users/{user}/reset', [UserController::class, 'reset'])
+    ->name('users.reset')
+    ->middleware(['auth:sanctum', 'can:accessAdmin']);
+
+Route::delete('/admin/users/{user}/destroy', [UserController::class, 'destroy'])
     ->name('users.destroy')
     ->middleware(['auth:sanctum', 'can:accessAdmin']);
 
@@ -90,7 +94,7 @@ Route::get('admin/notes', [NoteController::class, 'index'])
     ->name('notes')
     ->middleware(['auth:sanctum', 'can:accessAdmin']);
 
-Route::put('admin/notes/{note}', [NoteController::class, 'update'])
+Route::put('admin/notes/{note}/update', [NoteController::class, 'update'])
     ->name('notes.update')
     ->middleware(['auth:sanctum', 'can:accessAdmin']);
 

@@ -105,6 +105,19 @@ class UserController extends Controller
         return redirect()->route('users')->with('success', 'User updated.');
     }
 
+    public function reset(Request $request, User $user)
+    {
+        $attributes = $request->validate([
+            'password' => ['sometimes', 'required', 'min:8', 'max:50', 'confirmed'],
+        ]);
+
+        $attributes['password'] = Hash::make($request->input('password'));
+
+        $user->update($attributes);
+
+        return redirect()->route('users')->with('success', 'Password has been reset.');
+    }
+
     public function destroy(User $user)
     {
         if ($user->id === auth()->user()->id) {

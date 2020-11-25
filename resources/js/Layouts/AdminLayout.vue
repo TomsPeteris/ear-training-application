@@ -10,8 +10,9 @@
                 </div>
             </main>
         </div>
+        <!-- Modal Portal -->
+        <portal-target name="modal" multiple />
     </div>
-
 </template>
 
 <script>

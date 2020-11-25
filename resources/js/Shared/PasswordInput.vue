@@ -8,7 +8,7 @@
                type="password"
                :placeholder="placeholder"
                @input="$emit('input', $event.target.value)"
-               class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input">
+               class="block w-full mt-1 text-sm focus:border-purple-400 focus:outline-none focus:shadow-outline-purple form-input">
         <div v-show="error" class="mt-2 mb-4">
             <p class="text-sm text-red-600">
                 {{ error }}
