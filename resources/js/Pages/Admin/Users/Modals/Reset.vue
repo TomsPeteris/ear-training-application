@@ -18,7 +18,7 @@
             <template #content>
                 <div class="mt-4">
                     <password-input v-model="form.password" :error="passwordError" label="new password"/>
-                    <password-input v-model="form.password_confirmation" :error="passwordConfirmationError" label="confirm password"/>
+                    <password-input v-model="form.password_confirmation" label="confirm password"/>
 
                 </div>
             </template>
@@ -52,7 +52,6 @@
 
                 showModal: false,
                 passwordError: null,
-                passwordConfirmationError: null
             }
         },
 
@@ -79,7 +78,6 @@
             error() {
                 if (this.showModal) {
                     this.passwordError = this.form.error('password');
-                    this.passwordConfirmationError = this.form.error('password_confirmation');
                     this.$page.errors = {};
                 }
             }
