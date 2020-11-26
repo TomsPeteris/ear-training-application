@@ -16,7 +16,7 @@
                 </div>
             </div>
         </div>
-        <div class="w-full mb-8 overflow-hidden rounded-lg shadow-xs">
+        <div class="w-full overflow-hidden rounded-lg shadow-xs">
             <div class="w-full overflow-x-auto">
                 <table class="w-full whitespace-no-wrap">
                     <thead>
@@ -27,7 +27,7 @@
                     </tr>
                     </thead>
                     <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
-                    <tr v-for="note in notes" :key="note.id" class="hover:bg-gray-100 focus-within:bg-gray-100">
+                    <tr v-for="note in notes.data" :key="note.id" class="hover:bg-gray-100 focus-within:bg-gray-100">
                         <td class="px-4 py-3">
                             <inertia-link :href="route('notes.edit', note.id)" class="flex items-center">
                                 <div class="ml-3">
@@ -59,17 +59,23 @@
                 </table>
             </div>
         </div>
+        <pagination :links="notes.links" />
     </div>
 </template>
 
 <script>
     import AdminLayout from './../../../Layouts/AdminLayout'
+    import Pagination from "../../../Shared/Pagination";
 
     export default {
         layout: AdminLayout,
 
         props: {
-            notes: Array,
+            notes: Object,
         },
+
+        components: {
+            Pagination,
+        }
     }
 </script>

@@ -10,14 +10,16 @@ class NoteController extends Controller
 {
     public function index()
     {
-        $notes = Note::all()->map(function (Note $note) {
-            return [
-                'id' => $note->id,
-                'name' => $note->name,
-                'file' => $note->sound,
-                'updated_at' => date('D m Y H:i', strtotime($note->updated_at)),
-            ];
-        });
+        $notes = Note::paginate(12)
+            ->only('id', 'name', 'sound', 'updated_at')
+            ->transform(function ($item) {
+               return [
+                   'id' => $item['id'],
+                   'name' => $item['name'],
+                   'file' => $item['sound'],
+                   'updated_at' => date('D m Y H:i', strtotime($item['updated_at']))
+               ];
+            });
 
         return Inertia::render('Admin/Notes/Index', [
             'notes' => $notes,
