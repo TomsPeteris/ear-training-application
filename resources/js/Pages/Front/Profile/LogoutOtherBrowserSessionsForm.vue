@@ -1,4 +1,4 @@
-<template>
+        <template>
     <jet-action-section>
         <template #title>
             Browser Sessions

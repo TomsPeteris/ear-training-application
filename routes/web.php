@@ -1,10 +1,13 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\ExerciseController;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Front\ExerciseController;
+use App\Http\Controllers\Front\HistoryController;
+use App\Http\Controllers\Front\StatisticsController;
+use App\Http\Controllers\Front\HomeController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\NoteController;
+use App\Http\Controllers\Admin\NoteController;
+use App\Http\Controllers\Front\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,10 +30,13 @@ Route::get('/', function () {
 | Member Routes
 |--------------------------------------------------------------------------
 */
+Route::get('/profile', [ProfileController::class, 'index'])
+    ->name('profile')
+    ->middleware('auth:sanctum');
 
 Route::get('/dashboard', [HomeController::class, 'index'])
     ->name('dashboard')
-    ->middleware(['auth:sanctum', 'verified']);
+    ->middleware('auth:sanctum');
 
 Route::get('/exercises', [ExerciseController::Class, 'index'])
     ->name('exercises')
@@ -40,8 +46,8 @@ Route::post('/exercise', [ExerciseController::class, 'exercise'])
     ->name('exercise')
     ->middleware('auth:sanctum');
 
-Route::post('/exercise/create', [ExerciseController::class, 'create'])
-    ->name('exercise.create')
+Route::get('/exercises/interval', [ExerciseController::class, 'interval'])
+    ->name('exercises.interval')
     ->middleware('auth:sanctum');
 
 Route::post('/exercise/store', [ExerciseController::class, 'store'])
@@ -50,6 +56,14 @@ Route::post('/exercise/store', [ExerciseController::class, 'store'])
 
 Route::get('/exercise/{exercise}/overview', [ExerciseController::class, 'overview'])
     ->name('exercise.overview')
+    ->middleware('auth:sanctum');
+
+Route::get('/history', [HistoryController::class, 'index'])
+    ->name('history')
+    ->middleware('auth:sanctum');
+
+Route::get('/statistics', [StatisticsController::class, 'index'])
+    ->name('statistics')
     ->middleware('auth:sanctum');
 
 /*

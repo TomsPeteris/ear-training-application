@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Front;
 
+use App\Http\Controllers\Controller;
 use App\Models\Exercise;
+use App\Models\Interval;
 use App\Models\Question;
 use App\Services\ExerciseGenerator;
 use Inertia\Inertia;
@@ -26,15 +28,16 @@ class ExerciseController extends Controller
 
     public function index()
     {
-        return Inertia::render('Exercises/Index', [
-            'exercise_types' => Exercise::TYPES,
+        return Inertia::render('Front/Exercises/Index', [
+            'exercises' => Exercise::TYPES,
         ]);
     }
 
-    public function create(Request $request)
+    public function interval()
     {
-        return Inertia::render('Exercises/Create', [
-            'type' => $request->input('exercise_type')
+        return Inertia::render('Front/Exercises/Interval', [
+            'type' => Exercise::INTERVAL_TYPE,
+            'intervals' => Interval::all(),
         ]);
     }
 
@@ -42,10 +45,10 @@ class ExerciseController extends Controller
     {
         $attributes = collect($request->all());
         $exerciseContent = $this->exerciseGenerator->generateExercise($attributes);
-
-        return Inertia::render('Exercises/Exercise', [
+        return Inertia::render('Front/Exercises/Exercise', [
+            'exercise_type' => $exerciseContent['exercise_type'],
             'retry' => $exerciseContent['retry'],
-            'count' => $exerciseContent['count'],
+            'playback_speed' => $exerciseContent['playback_speed'],
             'questions' => $exerciseContent['questions'],
         ]);
     }
@@ -62,7 +65,7 @@ class ExerciseController extends Controller
             Question::create([
                 'questionable_type' => $question['questionable_type'],
                 'questionable_id' => $question['questionable_id'],
-                'answer' => true,  //$question['answer'],
+                'answer' => $question['answer'],  //$question['answer'],
                 'direction' => $question['direction'],
                 'type' => $question['type'],
                 'exercise_id' => $exercise->id
@@ -74,7 +77,7 @@ class ExerciseController extends Controller
 
     public function overview(Exercise $exercise)
     {
-        return Inertia::render('Exercises/Overview', [
+        return Inertia::render('Front/Exercises/Overview', [
             'exercise' => $exercise,
         ]);
     }
