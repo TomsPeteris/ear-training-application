@@ -65,7 +65,7 @@ class ExerciseController extends Controller
             Question::create([
                 'questionable_type' => $question['questionable_type'],
                 'questionable_id' => $question['questionable_id'],
-                'answer' => $question['answer'],  //$question['answer'],
+                'answer' => $question['answer'],
                 'direction' => $question['direction'],
                 'type' => $question['type'],
                 'exercise_id' => $exercise->id
@@ -77,8 +77,35 @@ class ExerciseController extends Controller
 
     public function overview(Exercise $exercise)
     {
+        $previousExerciseQuestions = auth()->user()->exercises->filter(function ($previousExercise) use ($exercise) {
+            return $previousExercise->id < $exercise->id;
+        })->sortByDesc('id')->first()->questions;
+
+        $correctQuestions = $exercise->questions->filter(function ($question) {
+            return $question->answer === 1;
+        })->map(function ($question) {
+            return [
+                'interval' => $question->questionable,
+                'direction' => $question->direction,
+                'type' => $question->type
+            ];
+        });
+
+        $incorrectQuestions = $exercise->questions->filter(function ($question) {
+            return $question->answer === 0;
+        })->map(function ($question) {
+            return [
+                'interval' => $question->questionable,
+                'direction' => $question->direction,
+                'type' => $question->type
+            ];
+        });;
+
         return Inertia::render('Front/Exercises/Overview', [
-            'exercise' => $exercise,
+            'questions' => $exercise->questions,
+            'correctQuestions' => $correctQuestions,
+            'incorrectQuestions' => $incorrectQuestions,
+            'previousExerciseQuestions' => $previousExerciseQuestions
         ]);
     }
 }

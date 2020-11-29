@@ -4,32 +4,16 @@
             Overview:
             <section-border />
         </div>
-        <div class="px-20">
-            <progress-bar :percentage="getProgress()" color="purple" class="mx-2 mb-2 h-3"/>
-            <template v-for="(question, index) in questions">
-                <div class="py-10 px-40" :key="index" v-if="isActive(index)">
-                    <div class="flex justify-center">
-                        <audio controls>
-                            <source :src="question.sound.root" type="audio/mpeg">
-                            Your browser does not support the audio element.
-                        </audio>
-                        <audio controls>
-                            <source :src="question.sound.end" type="audio/mpeg">
-                            Your browser does not support the audio element.
-                        </audio>
-                    </div>
-                    <div class="mt-10 grid grid-cols-2 gap-4 justify-items-stretch">
-                        <template v-for="answer in question.answers">
-                            <secondary-button @click.native="answerClicked(answer, question)">{{ answer }}</secondary-button>
-                        </template>
-                    </div>
-                </div>
-            </template>
-            <div class="py-10 px-40 grid justify-items-center" v-if="getProgress() === 100">
-                <p class="py-3 text-2xl text-bold">Congratulations!</p>
-                <p class="py-2 text-bold">You've finished the exercise!</p>
-                <PrimaryButton @click.native="submit">Overview</PrimaryButton>
-            </div>
+        <div class="px-20 mb-10">
+            <p class="text-xl font-semibold">Interval count: {{ questions.length }}</p>
+            <p class="text-xl font-semibold">Accuracy: {{ correctnessPercentage }}%</p>
+            <p class="text-xl font-semibold">Previous exercise accuracy: {{ previousExerciseCorrectness }}%</p>
+            <section-border />
+            <p class="text-xl font-semibold">Correct intervals: </p>
+            <p v-for="question in correctQuestions" class="flex text-xl font-semibold">{{ question.interval.name }}</p>
+            <section-border />
+            <p class="text-xl font-semibold">Incorrect intervals: </p>
+            <p v-for="question in incorrectQuestions" class="flex text-xl font-semibold">{{ question.interval.name }}</p>
         </div>
     </div>
 </template>
@@ -44,22 +28,11 @@ import PrimaryButton from "../../../Shared/PrimaryButton";
 export default {
     layout: AppLayout,
 
-    data() {
-        return {
-            form: this.$inertia.form({
-                exercise_type: this.exercise_type,
-                questions: []
-            }),
-            activeId: 0,
-            answered: false,
-        }
-    },
-
     props: {
-        questions: Array,
-        playback_speed: String,
-        retry: Boolean,
-        exercise_type: String,
+        questions: [Object, Array],
+        incorrectQuestions: [Object, Array],
+        correctQuestions: [Object, Array],
+        previousExerciseQuestions: [Object, Array],
     },
 
     components: {
@@ -68,6 +41,17 @@ export default {
         SecondaryButton,
         PrimaryButton
     },
+
+    computed: {
+        correctnessPercentage: function () {
+            return Math.round(this.correctQuestions.length * 100 / this.questions.length)
+        },
+
+        previousExerciseCorrectness: function () {
+            let correctQuestionCount = this.previousExerciseQuestions.filter(question => question.answer === 1).length
+            return Math.round(correctQuestionCount * 100 / this.previousExerciseQuestions.length)
+        }
+    }
 
 }
 </script>
