@@ -77,9 +77,11 @@ class ExerciseController extends Controller
 
     public function overview(Exercise $exercise)
     {
-        $previousExerciseQuestions = auth()->user()->exercises->filter(function ($previousExercise) use ($exercise) {
+        $previousExercise = auth()->user()->exercises->filter(function ($previousExercise) use ($exercise) {
             return $previousExercise->id < $exercise->id;
-        })->sortByDesc('id')->first()->questions;
+        })->sortByDesc('id')->first();
+
+        $previousExerciseQuestions = $previousExercise ? $previousExercise->questions : null;
 
         $correctQuestions = $exercise->questions->filter(function ($question) {
             return $question->answer === 1;

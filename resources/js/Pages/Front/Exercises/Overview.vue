@@ -5,9 +5,15 @@
             <section-border />
         </div>
         <div class="px-20 mb-10">
-            <p class="text-xl font-semibold">Interval count: {{ questions.length }}</p>
-            <p class="text-xl font-semibold">Accuracy: {{ correctnessPercentage }}%</p>
-            <p class="text-xl font-semibold">Previous exercise accuracy: {{ previousExerciseCorrectness }}%</p>
+            <div class="grid grid-cols-2">
+                <div>
+                    <p class="text-xl font-semibold">Interval count: {{ questions.length }}</p>
+                    <p class="text-xl font-semibold">Accuracy: {{ correctnessPercentage }}%</p>
+                </div>
+                <div>
+                    <p v-if="previousExerciseQuestions" class="text-xl font-semibold">Previous exercise accuracy: {{ previousExerciseCorrectness }}%</p>
+                </div>
+            </div>
             <section-border />
             <p class="text-xl font-semibold">Correct intervals: </p>
             <p v-for="question in correctQuestions" class="flex text-xl font-semibold">{{ question.interval.name }}</p>
