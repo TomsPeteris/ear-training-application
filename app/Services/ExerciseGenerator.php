@@ -5,10 +5,6 @@ namespace App\Services;
 use App\Models\Interval;
 use App\Models\Note;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
-use phpDocumentor\Reflection\Types\Array_;
-use phpDocumentor\Reflection\Types\Integer;
-use phpDocumentor\Reflection\Types\String_;
 
 class ExerciseGenerator
 {

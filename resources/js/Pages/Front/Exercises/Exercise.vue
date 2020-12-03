@@ -48,7 +48,8 @@
             return {
                 form: this.$inertia.form({
                     exercise_type: this.exercise_type,
-                    questions: []
+                    questions: [],
+                    accuracy: null
                 }),
                 activeId: 0,
                 answered: false,
@@ -71,6 +72,7 @@
 
         methods: {
             submit() {
+                this.calculateAccuracy()
                 this.$inertia.post(this.route('exercise.store'), this.form);
             },
 
@@ -98,6 +100,14 @@
             getProgress() {
                 let questionCount = this.questions.length
                 return this.activeId * 100 / questionCount
+            },
+
+            calculateAccuracy() {
+                let correctQuestionCount = this.form.questions.filter(function (question) {
+                    return question.answer === true
+                }).length
+
+                this.form.accuracy = correctQuestionCount * 100 / this.form.questions.length
             }
         },
     }

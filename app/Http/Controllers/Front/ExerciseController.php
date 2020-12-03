@@ -45,6 +45,7 @@ class ExerciseController extends Controller
     {
         $attributes = collect($request->all());
         $exerciseContent = $this->exerciseGenerator->generateExercise($attributes);
+
         return Inertia::render('Front/Exercises/Exercise', [
             'exercise_type' => $exerciseContent['exercise_type'],
             'retry' => $exerciseContent['retry'],
@@ -58,7 +59,8 @@ class ExerciseController extends Controller
         // maybe some basic validation?
         $exercise = Exercise::create([
             'user_id' => auth()->user()->id,
-            'type' => $request->input('exercise_type')
+            'type' => $request->input('exercise_type'),
+            'accuracy' => $request->input('accuracy')
         ]);
 
         foreach ($request->input('questions') as $question) {
@@ -83,30 +85,15 @@ class ExerciseController extends Controller
 
         $previousExerciseQuestions = $previousExercise ? $previousExercise->questions : null;
 
-        $correctQuestions = $exercise->questions->filter(function ($question) {
-            return $question->answer === 1;
-        })->map(function ($question) {
-            return [
-                'interval' => $question->questionable,
-                'direction' => $question->direction,
-                'type' => $question->type
-            ];
-        });
-
-        $incorrectQuestions = $exercise->questions->filter(function ($question) {
-            return $question->answer === 0;
-        })->map(function ($question) {
-            return [
-                'interval' => $question->questionable,
-                'direction' => $question->direction,
-                'type' => $question->type
-            ];
-        });;
-
         return Inertia::render('Front/Exercises/Overview', [
-            'questions' => $exercise->questions,
-            'correctQuestions' => $correctQuestions,
-            'incorrectQuestions' => $incorrectQuestions,
+            'exerciseQuestions' => $exercise->questions->map(function ($question) {
+                return [
+                    'interval' => $question->questionable->name,
+                    'direction' => $question->direction,
+                    'type' => $question->type,
+                    'answer' => $question->answer
+                ];
+            })->values(),
             'previousExerciseQuestions' => $previousExerciseQuestions
         ]);
     }

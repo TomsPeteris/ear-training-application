@@ -17,6 +17,7 @@ class CreateExercisesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->string('type');
+            $table->smallInteger('accuracy');
             $table->timestamps();
 
             $table->foreign('user_id')

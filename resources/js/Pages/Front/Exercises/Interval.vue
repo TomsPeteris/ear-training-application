@@ -47,7 +47,7 @@
                     <div class="text-xl font-semibold mt-2">
                         Count:
                     </div>
-                    <input v-model="form.question_count" type="number" min="1" max="50" class="border rounded-md py-2 px-4">
+                    <input v-model="form.question_count" type="number" min="1" max="50" class="border rounded-md py-2 px-4" @input="questionCount">
                 </div>
             </div>
             <div class="grid">
@@ -98,7 +98,7 @@
             },
 
             submit() {
-                this.$inertia.post(this.route('exercise'), this.form);
+                this.$inertia.post(this.route('exercise'), this.form)
             },
 
             questionCount(e) {
