@@ -25,7 +25,7 @@
                         </td>
                         <td class="border-t">
                             <inertia-link class="p-4 flex items-center" :href="route('exercise.overview', exercise.id)" tabindex="-1">
-                                {{ exercise.created_at }}
+                                {{ exercise.date }}
                             </inertia-link>
                         </td>
                         <td class="border-t w-px">
