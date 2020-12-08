@@ -26,8 +26,11 @@ class HandleInertiaRequests
         'route' => function () use ($request) {
             return  $request->route()->getName();
         },
-        'avatar' => function () {
-            return auth()->user()->getAvatarPath();
+        'current_user' => function () {
+            return [
+                'full_name' => auth()->user()->full_name,
+                'avatar' => auth()->user()->getAvatarPath()
+            ];
         }
     ]));
 

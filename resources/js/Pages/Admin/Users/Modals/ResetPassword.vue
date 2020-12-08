@@ -10,21 +10,19 @@
             </button>
         </div>
 
-        <dialog-modal :show="showModal" @close="showModal = false">
+        <dialog-modal :show="showModal" @close="back">
             <template #title>
                 Reset password
             </template>
 
             <template #content>
                 <div class="mt-4">
-                    <password-input v-model="form.password" :error="passwordError" label="new password"/>
-                    <password-input v-model="form.password_confirmation" label="confirm password"/>
-
+                    <password-input v-model="form" label="password"/>
                 </div>
             </template>
 
             <template #footer>
-                <secondary-button @click.native="nevermind">
+                <secondary-button @click.native="back">
                     Nevermind
                 </secondary-button>
 
@@ -71,8 +69,9 @@
                 this.$inertia.put(this.route('users.reset', this.$page.user.id), this.form);
             },
 
-            nevermind() {
+            back() {
                 this.showModal = false;
+                this.passwordError = null;
             },
 
             error() {
@@ -86,7 +85,11 @@
         watch: {
             '$page.flash': {
                 handler() {
-                    this.error()
+                    if (Object.keys(this.$page.errors).length > 0) {
+                        this.error();
+                    } else {
+                        this.showModal = false;
+                    }
                 }
             },
         },

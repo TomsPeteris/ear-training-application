@@ -1,18 +1,18 @@
 <template>
-    <header class="z-10 py-4 bg-white shadow-md dark:bg-gray-800">
-        <div class="container flex items-center justify-end  h-full px-6 mx-auto text-purple-600 dark:text-purple-300">
+    <header class="z-10 py-4 bg-white shadow-md">
+        <div class="container flex items-center justify-end  h-full px-6 mx-auto text-purple-600">
             <div class="hidden sm:flex sm:items-center sm:ml-6">
                 <div class="ml-3 relative">
                     <ul class="flex items-center flex-shrink-0 space-x-6">
                         <li class="flex">
-                            <jet-dropdown align="right" width="48">
+                            <dropdown-menu align="right" width="48">
                                 <template #trigger>
                                     <button class="flex items-center text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition duration-150 ease-in-out">
-                                        <span v-if="!$page.avatar" class="pr-2">{{ $page.user.full_name }}</span>
+                                        <span class="mr-2">{{ $page.current_user.full_name }}</span>
                                         <img
-                                            v-else
+                                            v-if="$page.current_user.avatar"
                                             class="object-cover w-10 h-10 rounded-full"
-                                            :src="$page.avatar"
+                                            :src="$page.current_user.avatar"
                                             alt=""
                                             aria-hidden="true"
                                         />
@@ -23,25 +23,23 @@
                                 </template>
 
                                 <template #content>
-                                    <!-- Account Management -->
                                     <div class="block px-4 py-2 text-xs text-gray-400">
                                         Manage Account
                                     </div>
 
-                                    <jet-dropdown-link :href="route('profile.show')">
+                                    <inertia-link :href="route('profile')" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100">
                                         Profile
-                                    </jet-dropdown-link>
+                                    </inertia-link>
 
                                     <div class="border-t border-gray-100"></div>
 
-                                    <!-- Authentication -->
                                     <form @submit.prevent="logout">
-                                        <jet-dropdown-link as="button">
+                                        <button type="submit" class="block w-full px-4 py-2 text-sm leading-5 text-gray-700 text-left hover:bg-gray-100">
                                             Logout
-                                        </jet-dropdown-link>
+                                        </button>
                                     </form>
                                 </template>
-                            </jet-dropdown>
+                            </dropdown-menu>
                         </li>
                     </ul>
                 </div>
@@ -51,13 +49,11 @@
 </template>
 
 <script>
-    import JetDropdown from '../../../Jetstream/Dropdown'
-    import JetDropdownLink from '../../../Jetstream/DropdownLink'
+    import DropdownMenu from "../../../Shared/DropdownMenu"
 
     export default {
         components: {
-            JetDropdown,
-            JetDropdownLink,
+            DropdownMenu
         },
 
         methods: {
@@ -69,5 +65,4 @@
         }
 
     }
-
 </script>
