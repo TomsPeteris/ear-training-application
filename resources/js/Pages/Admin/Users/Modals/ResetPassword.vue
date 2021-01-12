@@ -1,11 +1,11 @@
 <template>
-    <div>
-        <label v-if="label" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+    <div class="py-2">
+        <label v-if="label" class="capitalize text-gray-700 font-semibold mb-2">
             {{ label }}
         </label>
-        <div class="relative mb-2">
-            <input type="password" class="block w-full mt-1 text-sm disabled:opacity-25 form-input" value="Password" disabled>
-            <button @click="showModal = true" class="absolute inset-y-0 right-0 px-4 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-r-md active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+        <div class="relative">
+            <input type="password" class="block w-full mt-1 text-sm disabled:opacity-25 form-input" value="***************" disabled>
+            <button @click="showModal = true" class="absolute inset-y-0 right-0 px-4 text-sm font-medium leading-5 text-white bg-purple-600 rounded-r-md hover:bg-purple-700">
                 Reset
             </button>
         </div>
@@ -17,7 +17,7 @@
 
             <template #content>
                 <div class="mt-4">
-                    <password-input v-model="form" label="password"/>
+                    <password-input v-model="form.password" label="password"/>
                 </div>
             </template>
 
@@ -45,7 +45,6 @@
             return {
                 form: this.$inertia.form({
                     password: null,
-                    password_confirmation: null,
                 }),
 
                 showModal: false,
@@ -66,7 +65,8 @@
 
         methods: {
             submit() {
-                this.$inertia.put(this.route('users.reset', this.$page.user.id), this.form);
+                console.log(this.$page.user);
+                //this.$inertia.put(this.route('users.reset', this.$page.user.id), this.form);
             },
 
             back() {

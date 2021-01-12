@@ -58,7 +58,7 @@ class GenerateExercise implements GeneratesExercise
      * @param string $exerciseType
      * @return Collection
      */
-    public function generateQuestion(array $intervals, string $direction, string $playbackType, string $exerciseType): Collection
+    private function generateQuestion(array $intervals, string $direction, string $playbackType, string $exerciseType): Collection
     {
         $question = match ($exerciseType) {
             'interval' => Interval::where('name', array_rand(array_flip($intervals), 1))->first()
@@ -71,7 +71,7 @@ class GenerateExercise implements GeneratesExercise
         $questionContent->put('questionable_id', $question->id);
         $questionContent->put('direction', $direction);
         $questionContent->put('playback_type', $playbackType);
-        $questionContent->put('sound', $this->getSoundFiles($question['distance']));
+        $questionContent->put('sound', $this->getIntervalAudioFiles($question['distance']));
         $questionContent->put('answers', $this->generateAnswers($question->name, $questionType));
         $questionContent->put('correct_answer', $question->name);
 
@@ -85,7 +85,7 @@ class GenerateExercise implements GeneratesExercise
      * @param string $questionType
      * @return array
      */
-    public function generateAnswers(string $correctAnswer, string $questionType): array
+    private function generateAnswers(string $correctAnswer, string $questionType): array
     {
         $questionCollection = match ($questionType) {
             'Interval' => Interval::all(),
@@ -107,12 +107,13 @@ class GenerateExercise implements GeneratesExercise
     }
 
     /**
-     * Function retrieves the necessary sound file paths from DB.
+     * Function chooses a random starting note and builds the interval,
+     * then retrieves the necessary sound file paths from DB.
      *
      * @param int $distance
      * @return array
      */
-    public function getSoundFiles(int $distance): array
+    private function getIntervalAudioFiles(int $distance): array
     {
         $notes = Note::all();
         $root = $notes->random();
@@ -122,8 +123,8 @@ class GenerateExercise implements GeneratesExercise
         }
 
         return [
-            'first' => $root->getSoundPath(),
-            'second' => $notes->get($root->id + $distance - 1)->getSoundPath()
+            'first' => $root->getAudioFilePath(),
+            'second' => $notes->get($root->id + $distance - 1)->getAudioFilePath()
         ];
     }
 }

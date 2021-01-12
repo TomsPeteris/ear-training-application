@@ -1,5 +1,5 @@
 <template>
-    <jet-action-section>
+    <action-section>
         <template #title>
             Delete Account
         </template>
@@ -14,62 +14,56 @@
             </div>
 
             <div class="mt-5">
-                <jet-danger-button @click.native="confirmUserDeletion">
+                <danger-button @click.native="confirmUserDeletion">
                     Delete Account
-                </jet-danger-button>
+                </danger-button>
             </div>
 
             <!-- Delete Account Confirmation Modal -->
-            <jet-dialog-modal :show="confirmingUserDeletion" @close="confirmingUserDeletion = false">
+            <dialog-modal :show="confirmingUserDeletion" @close="confirmingUserDeletion = false">
                 <template #title>
                     Delete Account
                 </template>
 
                 <template #content>
-                    Are you sure you want to delete your account? Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.
-
+                    Are you sure you want to delete your account? Once your account is deleted,
+                    all of its resources and data will be permanently deleted. Please enter your
+                    password to confirm you would like to permanently delete your account.
                     <div class="mt-4">
-                        <jet-input type="password" class="mt-1 block w-3/4" placeholder="Password"
-                                    ref="password"
-                                    v-model="form.password"
-                                    @keyup.enter.native="deleteUser" />
-
-                        <jet-input-error :message="form.error('password')" class="mt-2" />
+                        <password-input v-model="form.password" :error="form.error('password')" label="Password" placeholder="**********" @keyup.enter.native="submit"/>
                     </div>
                 </template>
 
                 <template #footer>
-                    <jet-secondary-button @click.native="confirmingUserDeletion = false">
+                    <secondary-button @click.native="confirmingUserDeletion = false">
                         Nevermind
-                    </jet-secondary-button>
+                    </secondary-button>
 
-                    <jet-danger-button class="ml-2" @click.native="deleteUser" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                    <danger-button class="ml-2" @click.native="submit" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                         Delete Account
-                    </jet-danger-button>
+                    </danger-button>
                 </template>
-            </jet-dialog-modal>
+            </dialog-modal>
         </template>
-    </jet-action-section>
+    </action-section>
 </template>
 
 <script>
-    import JetActionSection from './../../Jetstream/ActionSection'
-    import JetButton from './../../Jetstream/Button'
-    import JetDialogModal from './../../Jetstream/DialogModal'
-    import JetDangerButton from './../../Jetstream/DangerButton'
-    import JetInput from './../../Jetstream/Input'
-    import JetInputError from './../../Jetstream/InputError'
-    import JetSecondaryButton from './../../Jetstream/SecondaryButton'
+    import ActionSection from '../../../Shared/ActionSection'
+    import DialogModal from '../../../Shared/DialogModal'
+    import DangerButton from '../../../Shared/DangerButton'
+    import SecondaryButton from '../../../Shared/SecondaryButton'
+    import FormSection from '../../../Shared/FormSection'
+    import PasswordInput from '../../../Shared/PasswordInput'
 
     export default {
         components: {
-            JetActionSection,
-            JetButton,
-            JetDangerButton,
-            JetDialogModal,
-            JetInput,
-            JetInputError,
-            JetSecondaryButton,
+            ActionSection,
+            DangerButton,
+            DialogModal,
+            SecondaryButton,
+            FormSection,
+            PasswordInput
         },
 
         data() {
@@ -87,6 +81,7 @@
         },
 
         methods: {
+            // Show modal function
             confirmUserDeletion() {
                 this.form.password = '';
 
@@ -97,8 +92,9 @@
                 }, 250)
             },
 
-            deleteUser() {
-                this.form.post(route('current-user.destroy'), {
+            // Delete profile request
+            submit() {
+                this.form.post(route('profile.delete'), {
                     preserveScroll: true
                 }).then(response => {
                     if (! this.form.hasErrors()) {

@@ -47,9 +47,15 @@ class AdminTest extends TestCase
     /** @test */
     public function an_admin_can_create_users()
     {
-        $user = User::factory()->raw(['role' => User::MEMBER_ROLE]);
-
-        $user['password_confirmation'] = $user['password'];
+        $user = [
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'email' => 'john.doe@example.com',
+            'password' => '12345678',
+            'password_confirmation' => '12345678',
+            'role' => 'Member',
+            'avatar' => '',
+        ];
 
         $this->actingAs(User::factory()->make(['role' => User::ADMIN_ROLE]))
             ->post(route('users.store'), $user)
@@ -57,7 +63,6 @@ class AdminTest extends TestCase
             ->assertSessionHas('success');
 
         $this->assertDatabaseHas('users', [
-            'username' => $user['username'],
             'email' => $user['email']
         ]);
     }
@@ -73,17 +78,23 @@ class AdminTest extends TestCase
     }
 
     /** @test */
-    public function an_admin_can_update_users()
+    public function an_super_admin_can_update_users()
     {
-        $user = User::factory()->create(['role' => User::MEMBER_ROLE]);
+        $user = User::create([
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'email' => 'john.doe@example.com',
+            'password' => '12345678',
+            'password_confirmation' => '12345678',
+            'role' => 'Member',
+            'avatar' => '',
+        ]);
 
         $attributes = [
-            'username' => 'NewUsername',
-            'full_name' => 'Updated Full Name',
-            'email' => 'updated@email.com'
+            'role' => 'Admin'
         ];
 
-        $this->actingAs(User::factory()->make(['role' => User::ADMIN_ROLE]))
+        $this->actingAs(User::factory()->make(['role' => User::SUPER_ADMIN_ROLE]))
             ->put(route('users.update', $user->id), $attributes)
             ->assertRedirect(route('users'))
             ->assertSessionHas('success');
@@ -94,7 +105,16 @@ class AdminTest extends TestCase
     /** @test */
     public function an_admin_can_delete_users()
     {
-        $user = User::factory()->create(['role' => User::MEMBER_ROLE]);
+        $this->withoutExceptionHandling();
+        $user = User::create([
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'email' => 'john.doe@example.com',
+            'password' => '12345678',
+            'password_confirmation' => '12345678',
+            'role' => 'Member',
+            'avatar' => '',
+        ]);
 
         $this->actingAs(User::factory()->make(['role' => User::ADMIN_ROLE]))
             ->delete(route('users.destroy', $user->id))
@@ -102,7 +122,6 @@ class AdminTest extends TestCase
             ->assertSessionHas('success');
 
         $this->assertDeleted('users', [
-            'username' => $user->username,
             'email' => $user->email
         ]);
     }

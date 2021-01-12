@@ -1,5 +1,6 @@
 <template>
-    <jet-form-section @submitted="updatePassword">
+    <form-section @received="submit">
+
         <template #title>
             Update Password
         </template>
@@ -9,74 +10,63 @@
         </template>
 
         <template #form>
-            <div class="col-span-6 sm:col-span-4">
-                <jet-label for="current_password" value="Current Password" />
-                <jet-input id="current_password" type="password" class="mt-1 block w-full" v-model="form.current_password" ref="current_password" autocomplete="current-password" />
-                <jet-input-error :message="form.error('current_password')" class="mt-2" />
-            </div>
 
-            <div class="col-span-6 sm:col-span-4">
-                <jet-label for="password" value="New Password" />
-                <jet-input id="password" type="password" class="mt-1 block w-full" v-model="form.password" autocomplete="new-password" />
-                <jet-input-error :message="form.error('password')" class="mt-2" />
-            </div>
+            <!-- Current password -->
+            <password-input v-model="form.current_password" :error="form.error('current_password')" label="Current Password"/>
 
-            <div class="col-span-6 sm:col-span-4">
-                <jet-label for="password_confirmation" value="Confirm Password" />
-                <jet-input id="password_confirmation" type="password" class="mt-1 block w-full" v-model="form.password_confirmation" autocomplete="new-password" />
-                <jet-input-error :message="form.error('password_confirmation')" class="mt-2" />
-            </div>
+            <!-- New password -->
+            <password-input v-model="form.password" :error="form.error('password')" label="New Password"/>
+
+            <!-- New password confirmation -->
+            <password-input v-model="form.password_confirmation" :error="form.error('password_confirmation')" label="Confirm Password"/>
+
         </template>
 
         <template #actions>
-            <jet-action-message :on="form.recentlySuccessful" class="mr-3">
-                Saved.
-            </jet-action-message>
 
-            <jet-button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+            <action-message :on="form.recentlySuccessful" class="mr-3">
+                Password has been updated.
+            </action-message>
+
+            <primary-button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                 Save
-            </jet-button>
+            </primary-button>
+
         </template>
-    </jet-form-section>
+
+    </form-section>
 </template>
 
 <script>
-    import JetActionMessage from './../../Jetstream/ActionMessage'
-    import JetButton from './../../Jetstream/Button'
-    import JetFormSection from './../../Jetstream/FormSection'
-    import JetInput from './../../Jetstream/Input'
-    import JetInputError from './../../Jetstream/InputError'
-    import JetLabel from './../../Jetstream/Label'
+    import FormSection from '../../../Shared/FormSection'
+    import PrimaryButton from '../../../Shared/PrimaryButton'
+    import PasswordInput from '../../../Shared/PasswordInput'
+    import ActionMessage from "../../../Shared/ActionMessage";
 
     export default {
         components: {
-            JetActionMessage,
-            JetButton,
-            JetFormSection,
-            JetInput,
-            JetInputError,
-            JetLabel,
+            FormSection,
+            PrimaryButton,
+            PasswordInput,
+            ActionMessage
         },
 
         data() {
             return {
                 form: this.$inertia.form({
-                    current_password: '',
-                    password: '',
-                    password_confirmation: '',
+                    current_password: null,
+                    password: null,
+                    password_confirmation: null,
                 }, {
-                    bag: 'updatePassword',
+                    bag: 'updatePassword'
                 }),
             }
         },
 
         methods: {
-            updatePassword() {
-                this.form.put(route('user-password.update'), {
-                    preserveScroll: true
-                }).then(() => {
-                    this.$refs.current_password.focus()
-                })
+            // Update password request
+            submit() {
+                this.form.put(this.route('profile.update-password'))
             },
         },
     }

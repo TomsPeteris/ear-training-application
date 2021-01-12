@@ -34,11 +34,11 @@
             </div>
             <p class="text-center text-5xl font-semibold text-purple-500">Intervals</p>
             <section-border />
-            <div class="grid">
+            <div class="grid justify-items-auto">
                 <p class="text-2xl font-bold mb-2">Count per interval:</p>
                 <bar-chart :data="barIntervalData" :options="countChartOptions" :height="chartHeight"/>
             </div>
-            <div class="grid">
+            <div class="grid justify-items-auto">
                 <p class="text-2xl font-bold my-2">Accuracy per interval:</p>
                 <bar-chart :data="barIntervalAccuracyData" :options="defaultChartOptions" :height="chartHeight"/>
             </div>
@@ -105,6 +105,7 @@
         },
 
         methods: {
+            // Calculates accuracy based on question data
             getAccuracy(questions) {
                 if (questions.length < 1) return null
                 let correctQuestionCount = questions.filter(function (question) {
@@ -114,6 +115,7 @@
                 return correctQuestionCount * 100 / questions.length
             },
 
+            // Returns the month string version from time object month id
             getMonthName(id) {
                 switch (id) {
                     case 0:
@@ -145,6 +147,7 @@
                 }
             },
 
+            // Calculates accuracy of each month for the last 6 months
             getAccuracyPerMonthForLastSixMonths() {
                 let thisMonth = new Date()
                 let lastMonth = new Date()
@@ -199,6 +202,7 @@
                 }
             },
 
+            // Retrieves exercise count for each month for last 6 months
             getExerciseCountPerMonthForLastSixMonths() {
                 let thisMonth = new Date()
                 let lastMonth = new Date()
@@ -255,11 +259,14 @@
         },
 
         computed: {
+            // Calculates total accuracy
             totalAccuracy: function () {
                 return Math.floor(this.getAccuracy(this.questions))
             },
 
-            intervalCountPerInterval: function () {
+            // Calculates the answered interval count per interval type and
+            // sorts them in data array usable by chartJS
+            intervalCountPerIntervalType: function () {
                 let intervalData = {
                     labels: [],
                     data: []
@@ -273,6 +280,8 @@
                 return intervalData
             },
 
+            // Calculates the answered interval accuracy per interval type and
+            // sorts them in data array usable by chartJs
             intervalAccuracyPerInterval: function () {
                 let intervalData = {
                     labels: [],
@@ -288,6 +297,7 @@
                 return intervalData
             },
 
+            // Sorts accuracy data for last six months into data usable by chartJS
             accuracyPerMonthForLastSixMonthsData: function () {
                 let unsortedData = this.getAccuracyPerMonthForLastSixMonths()
                 let accuracyData = {
@@ -305,6 +315,7 @@
                 return accuracyData
             },
 
+            // Sorts exercise count data for last six months into data usable by chartJS
             exerciseCountPerMonthForLastSixMonthData: function () {
                 let unsortedData = this.getExerciseCountPerMonthForLastSixMonths()
                 let exerciseData = {
@@ -322,18 +333,21 @@
                 return exerciseData
             },
 
+            // Calculates correct question count
             correctQuestionCount: function () {
                 return this.questions.filter(function (question) {
                     return question.answer === 1
                 }).length
             },
 
+            // Calculates incorrect question count
             incorrectQuestionCount: function () {
                 return this.questions.filter(function (question) {
                     return question.answer === 0
                 }).length
             },
 
+            // Displays accuracy data in chartJS doughnut diagram
             doughnutAccuracyData: function () {
                 return {
                     hoverBackgroundColor: "red",
@@ -349,6 +363,7 @@
                 }
             },
 
+            // Displays accuracy data for last 6 months in chartJS line diagram
             lineAccuracyData: function () {
                 return {
                     hoverBackgroundColor: "red",
@@ -366,6 +381,7 @@
                 }
             },
 
+            // Displays exercise count data for last 6 months in chartJS line diagram
             lineExerciseData: function () {
                 return {
                     hoverBackgroundColor: "red",
@@ -383,23 +399,25 @@
                 }
             },
 
+            // Displays answered interval count per interval type in chartJS bar diagram
             barIntervalData: function () {
                 return {
                     hoverBackgroundColor: "red",
                     hoverBorderWidth: 10,
-                    labels: this.intervalCountPerInterval.labels,
+                    labels: this.intervalCountPerIntervalType.labels,
                     datasets: [
                         {
                             label: 'Count',
                             backgroundColor: "#7e3af2",
                             borderColor: ['#7e3af2'],
-                            data: this.intervalCountPerInterval.data,
+                            data: this.intervalCountPerIntervalType.data,
                             fill: false
                         }
                     ]
                 }
             },
 
+            // Displays answered interval accuracy per interval type in chartJS bar diagram
             barIntervalAccuracyData: function () {
                 return {
                     hoverBackgroundColor: "red",

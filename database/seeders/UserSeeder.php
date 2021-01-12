@@ -20,8 +20,8 @@ class UserSeeder extends Seeder
         DB::table('users')->delete();
 
         DB::table('users')->insert([
-            'username' => 'super.admin',
-            'full_name' => 'Super Admin',
+            'first_name' => 'Super',
+            'last_name' => 'Admin',
             'email' => 'suadmin@test.lv',
             'password' => Hash::make('password'),
             'role' => User::SUPER_ADMIN_ROLE,

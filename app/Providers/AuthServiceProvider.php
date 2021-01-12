@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Exercise;
+use App\Models\User;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -25,8 +27,12 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        Gate::define('accessAdmin', function ($user) {
+        Gate::define('accessAdmin', function (User $user) {
             return $user->isAdmin();
+        });
+
+        Gate::define('accessOverview', function (User $user, Exercise $exercise) {
+            return $exercise->user()->first()->id === $user->id;
         });
     }
 }

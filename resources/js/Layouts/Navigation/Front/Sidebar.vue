@@ -2,7 +2,7 @@
     <aside class="z-20 hidden w-64 overflow-y-auto bg-white md:block flex-shrink-0">
         <div class="py-4 text-gray-500">
             <a class="ml-6 text-lg font-bold text-gray-800" href="#">
-                Qualification project
+                User Dashboard
             </a>
             <ul class="mt-6">
                 <li class="relative px-6 py-3">
@@ -15,12 +15,12 @@
                     </inertia-link>
                 </li>
                 <li class="relative px-6 py-3">
-                    <span :class="{ 'hidden' : !isRoute('exercises') }" class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg" aria-hidden="true" />
-                    <inertia-link :class="isRoute('exercises') ? 'text-gray-800  transform scale-110 translate-x-5' : 'transition duration-150 transform hover:scale-110 hover:text-gray-800 hover:translate-x-5'" class="inline-flex items-center w-full text-sm font-semibold" :href="route('exercises')">
+                    <span :class="{ 'hidden' : !isRoute('exercise') }" class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg" aria-hidden="true" />
+                    <inertia-link :class="isRoute('exercise') ? 'text-gray-800  transform scale-110 translate-x-5' : 'transition duration-150 transform hover:scale-110 hover:text-gray-800 hover:translate-x-5'" class="inline-flex items-center w-full text-sm font-semibold" :href="route('exercise')">
                         <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
-                        <span class="ml-4">Exercises</span>
+                        <span class="ml-4">Exercise</span>
                     </inertia-link>
                 </li>
                 <li class="relative px-6 py-3">

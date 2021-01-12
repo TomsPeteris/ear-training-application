@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Actions\Exercise\GenerateExercise;
 use App\Models\Note;
 use App\Models\Exercise;
 use App\Models\Interval;
 use App\Models\User;
-use App\Services\ExerciseGenerator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -26,7 +26,7 @@ class MemberTest extends TestCase
     public function a_member_can_access_exercise_section()
     {
         $this->actingAs(User::factory()->make(['role' => User::MEMBER_ROLE]))
-            ->get(route('exercises'))
+            ->get(route('exercise'))
             ->assertOk();
     }
 
@@ -38,13 +38,14 @@ class MemberTest extends TestCase
         ];
 
         $this->actingAs(User::factory()->make(['role' => User::MEMBER_ROLE]))
-            ->get(route('exercises.interval'), $attributes)
+            ->get(route('exercise.interval'), $attributes)
             ->assertOk();
     }
 
     /** @test */
     public function a_member_can_create_an_interval_exercise()
     {
+        $this->withoutExceptionHandling();
         Note::factory()->count(10)->create();
 
         $intervals = Interval::factory()->count(10)->create()->map(function ($interval) {
@@ -53,28 +54,26 @@ class MemberTest extends TestCase
 
         $attributes = [
             'exercise_type' => Exercise::INTERVAL_TYPE,
-            'question_attributes' => [
-                'intervals' => $intervals->toArray(),
-                'direction' => 'ascending',
-                'type' => 'melodic',
-            ],
+            'intervals' => $intervals->toArray(),
+            'direction' => 'ascending',
+            'type' => 'melodic',
             'retry' => false,
-            'count' => 2,
             'question_count' => 2,
-            'playback_speed' => 'medium'
         ];
 
         $this->actingAs(User::factory()->make(['role' => User::MEMBER_ROLE]))
-            ->post(route('exercise'), $attributes)
+            ->post(route('exercise.execute'), $attributes)
             ->assertOk();
     }
 
-    /** @test */
+    /** @test
+     * @throws \Illuminate\Validation\ValidationException
+     */
     public function a_member_can_complete_an_interval_exercise()
     {
         $this->withoutExceptionHandling();
 
-        $exerciseGenerator = new ExerciseGenerator();
+        $generator = new GenerateExercise();
         Note::factory()->count(10)->create();
 
         $intervals = Interval::factory()->count(10)->create();
@@ -84,16 +83,11 @@ class MemberTest extends TestCase
 
         $attributes = [
             'exercise_type' => Exercise::INTERVAL_TYPE,
-            'question_attributes' => [
-                'intervals' => $intervalNames->toArray(),
-                'direction' => 'ascending',
-                'type' => 'melodic',
-                'answer' => true
-            ],
+            'intervals' => $intervalNames->toArray(),
+            'direction' => 'ascending',
+            'type' => 'melodic',
             'retry' => false,
-            'count' => 1,
             'question_count' => 1,
-            'playback_speed' => 'medium'
         ];
 
         $questions = [
@@ -107,15 +101,15 @@ class MemberTest extends TestCase
             ]
         ];
 
-        $exerciseContent = $exerciseGenerator->generateExercise(collect($attributes));
-        $exerciseContent->forget(['retry', 'question_Attributes']);
+        $exerciseContent = $generator->generate($attributes);
         $exerciseContent->put('questions', $questions);
+        $exerciseContent->put('accuracy', 50);
 
         $response = $this->actingAs(User::factory()->create(['role' => User::MEMBER_ROLE]))
             ->post(route('exercise.store'), $exerciseContent->toArray());
 
         $exercise = Exercise::find(1)->first();
 
-        $response->assertRedirect(route('exercise.overview', $exercise->id));
+        $response->assertRedirect(route('history.overview', $exercise->id));
     }
 }

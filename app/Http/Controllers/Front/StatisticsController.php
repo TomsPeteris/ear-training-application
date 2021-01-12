@@ -7,24 +7,28 @@ use App\Models\Exercise;
 use App\Models\Interval;
 use Illuminate\Support\Collection;
 use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 
 class StatisticsController extends Controller
 {
-    public function index()
+    /**
+     * @return InertiaResponse
+     */
+    public function index(): InertiaResponse
     {
-        $exercises = Exercise::where('user_id', auth()->user()->id)
+        $questions = Collection::empty();
+        $intervals = Collection::empty();
+        $exercises = Exercise::where('user_id', request()->user()->id)
             ->orderBy('created_at', 'desc')
             ->get();
-        $questionCollections = $exercises->map(function ($exercise, $key) {
+
+        $questionCollection = $exercises->map(function ($exercise) {
             return $exercise->questions;
         });
         $intervalCollection = Interval::all()->pluck('name')->toArray();
 
-        $questions = Collection::empty();
-        $intervals = Collection::empty();
-
-        foreach ($questionCollections as $questionCollection) {
-            $questions = $questions->concat($questionCollection);
+        foreach ($questionCollection as $question) {
+            $questions = $questions->concat($question);
         }
 
         $questions = $questions->map(function ($question) {

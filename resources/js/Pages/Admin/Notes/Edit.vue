@@ -14,7 +14,7 @@
                         <text-input v-model="form.name" :error="form.error('name')" :disabled="true" label="Name" />
                     </div>
                     <div class="w-full md:w-1/2 px-3">
-                        <file-input v-model="form.file" type="file" :error="form.error('file')" label="Sound file" />
+                        <audio-input v-model="form.file" type="file" :error="form.error('file')" label="Sound file" />
                     </div>
                 </div>
                 <div class="flex justify-end">
@@ -29,7 +29,7 @@
     import AdminLayout from './../../../Layouts/AdminLayout'
     import PrimaryButton from "../../../Shared/PrimaryButton";
     import TextInput from "../../../Shared/TextInput";
-    import FileInput from '../../../Shared/FileInput'
+    import AudioInput from '../../../Shared/AudioInput'
 
     export default {
         layout: AdminLayout,
@@ -38,7 +38,12 @@
             return {
                 form: this.$inertia.form({
                     name: this.note.name,
-                    file_path: this.note.file,
+                    file: this.note.file_path ? new File(
+                        [this.note.file_path],
+                        this.note.file_path.split('\\').pop().split('/').pop()
+                    ) :  null,
+                }, {
+                    bag: 'updateNote'
                 }),
             }
         },
@@ -50,13 +55,16 @@
         components: {
             PrimaryButton,
             TextInput,
-            FileInput,
+            AudioInput,
         },
 
         methods: {
+            // Update note request
             submit() {
                 const data = new FormData()
-                data.append('file', this.form.file)
+                if (this.form.file) {
+                    data.append('file', this.form.file)
+                }
                 data.append('_method', 'put')
 
                 this.$inertia.post(this.route('notes.update', this.note.id), data);

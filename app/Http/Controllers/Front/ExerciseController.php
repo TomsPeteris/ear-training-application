@@ -2,38 +2,32 @@
 
 namespace App\Http\Controllers\Front;
 
+use App\Contracts\Exercise\GeneratesExercise;
+use App\Contracts\Exercise\StoresExerciseData;
 use App\Http\Controllers\Controller;
 use App\Models\Exercise;
 use App\Models\Interval;
-use App\Models\Question;
-use App\Services\ExerciseGenerator;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Inertia\Response as InertiaResponse;
 
 class ExerciseController extends Controller
 {
     /**
-     * @var ExerciseGenerator
+     * @return InertiaResponse
      */
-    private $exerciseGenerator;
-
-    /**
-     * ExerciseController constructor.
-     * @param ExerciseGenerator $exerciseGenerator
-     */
-    public function __construct(ExerciseGenerator $exerciseGenerator)
-    {
-        $this->exerciseGenerator = $exerciseGenerator;
-    }
-
-    public function index()
+    public function index(): InertiaResponse
     {
         return Inertia::render('Front/Exercises/Index', [
             'exercises' => Exercise::TYPES,
         ]);
     }
 
-    public function interval()
+    /**
+     * @return InertiaResponse
+     */
+    public function interval(): InertiaResponse
     {
         return Inertia::render('Front/Exercises/Interval', [
             'type' => Exercise::INTERVAL_TYPE,
@@ -41,60 +35,31 @@ class ExerciseController extends Controller
         ]);
     }
 
-    public function exercise(Request $request)
+    /**
+     * @param Request $request
+     * @param GeneratesExercise $generator
+     * @return InertiaResponse
+     */
+    public function execute(Request $request, GeneratesExercise $generator): InertiaResponse
     {
-        $attributes = collect($request->all());
-        $exerciseContent = $this->exerciseGenerator->generateExercise($attributes);
+        $exercise = $generator->generate($request->all());
 
         return Inertia::render('Front/Exercises/Exercise', [
-            'exercise_type' => $exerciseContent['exercise_type'],
-            'retry' => $exerciseContent['retry'],
-            'playback_speed' => $exerciseContent['playback_speed'],
-            'questions' => $exerciseContent['questions'],
+            'questions' => $exercise['questions'],
+            'retry' => $exercise['retry'],
+            'exerciseType' => $exercise['exercise_type']
         ]);
     }
 
-    public function store(Request $request)
+    /**
+     * @param Request $request
+     * @param StoresExerciseData $storer
+     * @return RedirectResponse
+     */
+    public function store(Request $request, StoresExerciseData $storer): RedirectResponse
     {
-        // maybe some basic validation?
-        $exercise = Exercise::create([
-            'user_id' => auth()->user()->id,
-            'type' => $request->input('exercise_type'),
-            'accuracy' => $request->input('accuracy')
-        ]);
+        $exercise = $storer->store($request->all());
 
-        foreach ($request->input('questions') as $question) {
-            Question::create([
-                'questionable_type' => $question['questionable_type'],
-                'questionable_id' => $question['questionable_id'],
-                'answer' => $question['answer'],
-                'direction' => $question['direction'],
-                'type' => $question['type'],
-                'exercise_id' => $exercise->id
-            ]);
-        }
-
-        return redirect()->route('exercise.overview', $exercise->id);
-    }
-
-    public function overview(Exercise $exercise)
-    {
-        $previousExercise = auth()->user()->exercises->filter(function ($previousExercise) use ($exercise) {
-            return $previousExercise->id < $exercise->id;
-        })->sortByDesc('id')->first();
-
-        $previousExerciseQuestions = $previousExercise ? $previousExercise->questions : null;
-
-        return Inertia::render('Front/Exercises/Overview', [
-            'exerciseQuestions' => $exercise->questions->map(function ($question) {
-                return [
-                    'interval' => $question->questionable->name,
-                    'direction' => $question->direction,
-                    'type' => $question->type,
-                    'answer' => $question->answer
-                ];
-            })->values(),
-            'previousExerciseQuestions' => $previousExerciseQuestions
-        ]);
+        return redirect()->route('history.overview', $exercise->id);
     }
 }

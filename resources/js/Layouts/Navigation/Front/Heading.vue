@@ -1,6 +1,14 @@
 <template>
     <header class="z-10 py-4 bg-white shadow-md">
-        <div class="container flex items-center justify-end  h-full px-6 mx-auto text-purple-600">
+        <div :class="isAdmin($page.current_user) ? 'justify-between' : 'justify-end' " class="container flex items-center h-full px-6 mx-auto text-purple-600">
+            <template v-if="isAdmin($page.current_user)">
+                <inertia-link class="flex justify-start items-center font-bold text-gray-800" :href="route('admin')">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                    </svg>
+                    <span class="ml-2">Admin Panel</span>
+                </inertia-link>
+            </template>
             <div class="hidden sm:flex sm:items-center sm:ml-6">
                 <div class="ml-3 relative">
                     <ul class="flex items-center flex-shrink-0 space-x-6">
@@ -49,7 +57,7 @@
 </template>
 
 <script>
-    import DropdownMenu from "../../Shared/DropdownMenu"
+    import DropdownMenu from "../../../Shared/DropdownMenu"
 
     export default {
         components: {
@@ -62,6 +70,10 @@
                     window.location = '/';
                 })
             },
+
+            isAdmin(user) {
+                return user.role === 'Super Admin' || user.role === 'Admin'
+            }
         }
 
     }

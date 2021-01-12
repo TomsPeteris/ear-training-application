@@ -2,130 +2,104 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Contracts\User\DeletesUser;
+use App\Contracts\User\CreatesUser;
+use App\Contracts\User\UpdatesUser;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 
 class UserController extends Controller
 {
-    public function index()
+    /**
+     * @return InertiaResponse
+     */
+    public function index(): InertiaResponse
     {
-        $users = User::all()->map(function (User $user) {
-            return [
-                'id' => $user->id,
-                'username' => $user->username,
-                'full_name' => $user->full_name,
-                'email' => $user->email,
-                'role' => $user->role,
-                'avatar' => $user->getAvatarPath(),
-                'created_at' => date('D m Y H:i', strtotime($user->created_at)),
-            ];
-        });
+        $users = User::paginate(12)
+            ->only('id', 'first_name', 'last_name', 'email', 'role', 'avatar', 'created_at')
+            ->transform(function ($item) {
+                return [
+                    'id' => $item['id'],
+                    'full_name' => $item['first_name'].' '.$item['last_name'],
+                    'email' => $item['email'],
+                    'role' => $item['role'],
+                    'avatar' => $item['avatar'] ? asset('storage/'.$item['avatar']) : null,
+                    'created_at' => date('D m Y H:i', strtotime($item['created_at']))
+                ];
+            });
 
         return Inertia::render('Admin/Users/Index', [
             'users' => $users,
         ]);
     }
 
-    public function create() {
+    /**
+     * @return InertiaResponse
+     */
+    public function create(): InertiaResponse
+    {
         return Inertia::render('Admin/Users/Create', [
             'roles' => User::ASSIGNABLE_ROLES,
         ]);
     }
 
-    public function store(Request $request) {
-        $request->validate([
-            'username' => ['required', 'max:255', 'unique:users', 'alpha_dash'],
-            'full_name' => ['required', 'max:255'],
-            'email' => ['required', 'max:255', 'email', 'unique:users'],
-            'password' => ['required', 'max:255', 'min:8', 'confirmed'],
-            'avatar' => ['sometimes', 'image'],
-        ]);
+    /**
+     * @param Request $request
+     * @param CreatesUser $creator
+     * @return RedirectResponse
+     */
+    public function store(Request $request, CreatesUser $creator): RedirectResponse
+    {
+        $creator->create($request->all());
 
-        User::create([
-            'username' => $request->input('username'),
-            'full_name' => $request->input('full_name'),
-            'email' => $request->input('email'),
-            'password' => Hash::make($request->input('password')),
-            'role' => $request->input('role'),
-            'avatar' => $request->file('avatar')
-                ? $request->file('avatar')->store('avatars')
-                : null,
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now()
-        ]);
-
-        return redirect()->route('users')->with('success', 'User created.');
+        return redirect()->route('users')->with('success', 'User has been successfully created.');
     }
 
-    public function edit(User $user)
+    /**
+     * @param User $user
+     * @return InertiaResponse
+     */
+    public function edit(User $user): InertiaResponse
     {
         return Inertia::render('Admin/Users/Edit', [
             'roles' => User::ASSIGNABLE_ROLES,
             'user' => [
                 'id' => $user->id,
-                'username' => $user->username,
-                'full_name' => $user->full_name,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
                 'email' => $user->email,
-                'photo' => $user->photo,
+                'avatar' => $user->getAvatarPath(),
                 'role' => $user->role,
             ],
         ]);
     }
 
-    public function update(Request $request, User $user)
+    /**
+     * @param Request $request
+     * @param UpdatesUser $updater
+     * @param User $user
+     * @return RedirectResponse
+     */
+    public function update(Request $request, UpdatesUser $updater, User $user): RedirectResponse
     {
-        $attributes = $request->validate([
-            'username' => ['required', 'max:50'],
-            'full_name' => ['required', 'max:50'],
-            'email' => ['required', 'max:50', 'email', Rule::unique('users')->ignore($user)],
-            'password' => ['sometimes', 'required', 'min:8', 'max:50', 'confirmed'],
-            'avatar' => ['sometimes', 'image'],
-            'role' => ['sometimes'],
-        ]);
+        $updater->update($user, $request->all());
 
-        if ($request->input('password')) {
-            $attributes['password'] = Hash::make($request->input('password'));
-        }
-
-        if ($request->file('avatar')) {
-            $attributes['avatar'] = $request->file('avatar')->store('avatars');
-        }
-
-        if ($request->input('role')) {
-            $attributes['role'] = $request->input('role');
-        }
-
-        $user->update($attributes);
-
-        return redirect()->route('users')->with('success', 'User updated.');
+        return redirect()->route('users')->with('success', 'User has been successfully updated.');
     }
 
-    public function reset(Request $request, User $user)
+    /**
+     * @param DeletesUser $deleter
+     * @param User $user
+     * @return RedirectResponse
+     */
+    public function destroy(DeletesUser $deleter, User $user): RedirectResponse
     {
-        $attributes = $request->validate([
-            'password' => ['sometimes', 'required', 'min:8', 'max:50', 'confirmed'],
-        ]);
+        $deleter->delete($user);
 
-        $attributes['password'] = Hash::make($request->input('password'));
-
-        $user->update($attributes);
-
-        return redirect()->route('users')->with('success', 'Password has been reset.');
-    }
-
-    public function destroy(User $user)
-    {
-        if ($user->id === auth()->user()->id) {
-            return redirect()->route('users')->with('error', 'You cannot delete your profile here.');
-        }
-
-        $user->delete();
-
-        return redirect()->route('users')->with('success', 'User deleted.');
+        return redirect()->route('users')->with('success', 'User has been successfully deleted.');
     }
 }

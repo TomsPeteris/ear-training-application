@@ -3,9 +3,23 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * App\Models\User
+ *
+ * @property int $id
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $email
+ * @property string $password
+ * @property string role
+ * @property string|null avatar
+ * @property \Illuminate\Support\Carbon|null created_at
+ * @property \Illuminate\Support\Carbon|null updated_at
+ *
+ */
 class User extends Authenticatable
 {
     use hasFactory;
@@ -21,8 +35,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'username',
-        'full_name',
+        'first_name',
+        'last_name',
         'email',
         'password',
         'role',
@@ -48,19 +62,36 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function exercises()
+    /**
+     * @return HasMany
+     */
+    public function exercises(): HasMany
     {
         return $this->hasMany('App\Models\Exercise');
     }
 
-    public function isAdmin()
+    /**
+     * @return bool
+     */
+    public function isAdmin(): bool
     {
         return $this->role === self::ADMIN_ROLE ||
             $this->role === self::SUPER_ADMIN_ROLE;
     }
 
-    public function getAvatarPath()
+    /**
+     * @return string|null
+     */
+    public function getAvatarPath(): string|null
     {
         return $this->avatar ? asset('storage/'.$this->avatar) : null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFullName(): string
+    {
+        return $this->first_name.' '.$this->last_name;
     }
 }

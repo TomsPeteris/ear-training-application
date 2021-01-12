@@ -35,7 +35,7 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
-                        <tr v-for="user in users" :key="user.id" class="hover:bg-gray-100 focus-within:bg-gray-100">
+                        <tr v-for="user in users.data" :key="user.id" class="hover:bg-gray-100 focus-within:bg-gray-100">
                             <td class="px-4 py-3">
                                 <inertia-link :href="route('users.edit', user.id)" class="flex items-center">
                                     <div v-if="user.avatar" class="flex-shrink-0 w-10 h-10">
@@ -70,6 +70,7 @@
                 </table>
             </div>
         </div>
+        <pagination :links="users.links" />
     </div>
 </template>
 
@@ -81,12 +82,13 @@
     import JetSecondaryButton from './../../../Jetstream/SecondaryButton'
     import Create from './Create'
     import FlashMessages from '../../../Shared/FlashMessages'
+    import Pagination from '../../../Shared/Pagination'
+
     export default {
         layout: AdminLayout,
 
         props: {
-            users: Array,
-            create: String,
+            users: Object,
         },
 
         components: {
@@ -96,13 +98,7 @@
             JetSecondaryButton,
             Create,
             FlashMessages,
+            Pagination
         },
-
-        methods: {
-            check() {
-                console.log(this.$page.flash);
-            }
-        }
-
     }
 </script>

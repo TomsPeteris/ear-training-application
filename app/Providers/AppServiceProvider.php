@@ -30,6 +30,9 @@ class AppServiceProvider extends ServiceProvider
         //
     }
 
+    /**
+     * Transforms laravel pagination to work with inertiaJS.
+     */
     protected function registerLengthAwarePaginator()
     {
         $this->app->bind(LengthAwarePaginator::class, function ($app, $values) {

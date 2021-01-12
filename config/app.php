@@ -178,6 +178,8 @@ return [
         App\Providers\JetstreamServiceProvider::class,
         App\Providers\ProfileServiceProvider::class,
         App\Providers\ExerciseServiceProvider::class,
+        App\Providers\NoteServiceProvider::class,
+        App\Providers\UserServiceProvider::class,
 
     ],
 
